@@ -21,12 +21,12 @@ namespace MeeShop {
         Q_OBJECT
         Q_PROPERTY(QVariant model READ get_final_list NOTIFY model_changed)
     public:
-        explicit information_processor(QObject *parent = 0): QObject(parent){};
+        explicit information_processor(QObject *parent = 0) : QObject(parent), final_model(new app_model(this)) {}
 
         Q_INVOKABLE void load_applications(QString xml);
         Q_INVOKABLE void load_rss_feeds(QString xml);
 
-        QVariant get_final_list() {return QVariant::fromValue(&final_model);}
+        QVariant get_final_list() {return QVariant::fromValue(final_model);}
     private slots:
         void parse_xml(QNetworkReply* reply);
         void process_reply();
@@ -40,7 +40,7 @@ namespace MeeShop {
     private:
         QNetworkAccessManager manager;
         QScopedPointer<QNetworkReply> reply;
-        app_model final_model;
+        app_model *final_model;
         QXmlStreamReader xml_reader;
     };
 }
