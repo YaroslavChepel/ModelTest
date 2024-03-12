@@ -2,6 +2,7 @@
 #define INFO_STORAGE_H
 
 #include <QString>
+#include <qdeclarative.h>
 namespace MeeShop {
 struct info_storage {
     QString app_name;
@@ -19,6 +20,6 @@ struct info_storage {
     QString letter;
 };
 }
-
+Q_DECLARE_METATYPE(MeeShop::info_storage)
 
 #endif // INFO_STORAGE_H

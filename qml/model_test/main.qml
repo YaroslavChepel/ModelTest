@@ -27,4 +27,42 @@ PageStackWindow {
             MenuItem { text: qsTr("Sample menu item") }
         }
     }
+    Rectangle {
+        id: container
+        anchors.fill: parent
+
+        ListModel {
+            id: animalsModel
+            ListElement { name: "Parrot"; size: "Small" }
+            ListElement { name: "Guinea pig"; size: "Small" }
+            ListElement { name: "Dog"; size: "Medium" }
+            ListElement { name: "Cat"; size: "Medium" }
+            ListElement { name: "Elephant"; size: "Large" }
+        }
+
+        // The delegate for each section header
+        Component {
+            id: sectionHeading
+            Rectangle {
+                width: container.width
+                height: childrenRect.height
+                color: "lightsteelblue"
+
+                Text {
+                    text: section
+                    font.bold: true
+                }
+            }
+        }
+
+        ListView {
+            id: mainList
+            anchors.fill: parent
+            delegate: Text { id: pon ; text: type}
+
+            section.property: "size"
+            section.criteria: ViewSection.FullString
+            section.delegate: sectionHeading
+        }
+    }
 }

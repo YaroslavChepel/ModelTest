@@ -35,7 +35,7 @@ void MeeShop::information_processor::parse_xml(QNetworkReply *reply) {
                     if(!xml_reader.attributes().value("icon").toString().isEmpty()) {
                         is.app_icon = xml_reader.attributes().value("icon").toString();
                     }
-                    final_model.addEntry(is);
+                    final_model.push_back(is);
                 }
             }
         }
@@ -43,13 +43,13 @@ void MeeShop::information_processor::parse_xml(QNetworkReply *reply) {
             MeeShop::info_storage is;
             is.rss_country_name =xml_reader.attributes().value("name").toString();
             is.rss_country_file = xml_reader.attributes().value("file").toString();
-            final_model.addEntry(is);
+            final_model.push_back(is);
         }
         else if (xml_reader.isStartElement() && xml_reader.name() == "rss") {
             MeeShop::info_storage is;
             is.rss_feed_name = xml_reader.attributes().value("name").toString();
             is.rss_feed_url =xml_reader.attributes().value("url").toString();
-            final_model.addEntry(is);
+            final_model.push_back(is);
         }
         xml_reader.readNext();
     }
