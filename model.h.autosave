@@ -1,0 +1,44 @@
+#include <QAbstractListModel>
+#include "info_storage.h"
+#include <QList>
+#include <QDebug>
+
+
+namespace MeeShop {
+class MeeShopApplicationModel : public QAbstractListModel
+{
+    Q_OBJECT
+public:
+    enum EntryRoles {
+        AppNameRole = Qt::UserRole + 1,
+        AppVerRole,
+        AppSizeRole,
+        AppPkgNameRole,
+        AppIconRole,
+
+        RssCountryNameRole,
+        RssCountryFileRole,
+
+        RssFeedNameRole,
+        RssFeedUrlRole,
+
+        LetterRole
+    };
+
+    MeeShopApplicationModel(QObject *parent = 0);
+
+    void addEntry(const MeeShop::info_storage &);
+
+    int rowCount(const QModelIndex & parent = QModelIndex()) const;
+
+    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+
+private:
+    QList<MeeShop::info_storage> m_entries;
+};
+}
+
+Q_DECLARE_METATYPE(MeeShop::MeeShopApplicationModel*)
+#endif // ANIMALMODEL_H
+
+

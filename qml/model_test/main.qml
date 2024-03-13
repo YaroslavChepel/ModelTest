@@ -27,4 +27,5 @@ PageStackWindow {
             MenuItem { text: qsTr("Sample menu item") }
         }
     }
+
 }

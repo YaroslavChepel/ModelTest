@@ -2,6 +2,7 @@
 #define INFO_STORAGE_H
 
 #include <QString>
+
 namespace MeeShop {
 struct info_storage {
     QString app_name;
@@ -19,6 +20,5 @@ struct info_storage {
     QString letter;
 };
 }
-
 
 #endif // INFO_STORAGE_H

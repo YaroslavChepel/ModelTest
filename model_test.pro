@@ -31,7 +31,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    app_model.cpp \
+    MeeShopApplicationModel.cpp \
     information_processor.cpp
 
 # Please do not modify the following two lines. Required for deployment.
@@ -39,6 +39,6 @@ include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS += \
-    app_model.h \
     info_storage.h \
+    MeeShopApplicationModel.h \
     information_processor.h

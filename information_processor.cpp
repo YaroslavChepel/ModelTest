@@ -1,5 +1,18 @@
 #include "information_processor.h"
 
+struct Compare {
+    bool operator()(const MeeShop::info_storage& a, const MeeShop::info_storage& b) const {
+        if (!a.app_name.isEmpty() && !b.app_name.isEmpty()) {
+            return a.app_name.compare(b.app_name, Qt::CaseInsensitive) < 0;
+        }
+        else if (!a.rss_country_name.isEmpty() && b.rss_country_name.isEmpty()) {
+            return a.rss_country_name.compare(b.rss_country_name, Qt::CaseInsensitive) < 0;
+        } else {
+            return a.rss_feed_name.compare(b.rss_feed_name, Qt::CaseInsensitive) < 0;
+        }
+    }
+};
+
 void MeeShop::information_processor::load_applications(QString xml) {
     QNetworkRequest request(QUrl("http://wunderwungiel.pl/MeeGo/openrepos/" + xml));
     reply.reset(manager.get(request));
@@ -29,27 +42,30 @@ void MeeShop::information_processor::parse_xml(QNetworkReply *reply) {
                 if(xml_reader.isStartElement() && xml_reader.name() == "data") {
                     MeeShop::info_storage is;
                     is.app_name = xml_reader.attributes().value("name").toString();
+                    is.letter = is.app_name[0].toUpper();
                     is.app_size = xml_reader.attributes().value("size").toString();
                     is.app_ver = xml_reader.attributes().value("ver").toString();;
                     is.app_pkg_name = xml_reader.attributes().value("package").toString();
                     if(!xml_reader.attributes().value("icon").toString().isEmpty()) {
                         is.app_icon = xml_reader.attributes().value("icon").toString();
                     }
-                    final_model.addEntry(is);
+                    final_model->addEntry(is);
                 }
             }
         }
         else if(xml_reader.isStartElement() && xml_reader.name() == "country") {
             MeeShop::info_storage is;
             is.rss_country_name =xml_reader.attributes().value("name").toString();
+            is.letter = is.rss_country_name[0].toUpper();
             is.rss_country_file = xml_reader.attributes().value("file").toString();
-            final_model.addEntry(is);
+            final_model->addEntry(is);
         }
         else if (xml_reader.isStartElement() && xml_reader.name() == "rss") {
             MeeShop::info_storage is;
             is.rss_feed_name = xml_reader.attributes().value("name").toString();
+            is.letter = is.rss_feed_name[0].toUpper();
             is.rss_feed_url =xml_reader.attributes().value("url").toString();
-            final_model.addEntry(is);
+            final_model->addEntry(is);
         }
         xml_reader.readNext();
     }
@@ -57,10 +73,16 @@ void MeeShop::information_processor::parse_xml(QNetworkReply *reply) {
         emit parsing_error(xml_reader.errorString());
     }
     else {
+        QList<MeeShop::info_storage> list_to_sort = final_model->get_list();
+        std::sort(list_to_sort.begin(), list_to_sort.end(), Compare());
+        foreach (MeeShop::info_storage i, list_to_sort) {
+            qDebug() << i.app_name;
+        }
+        final_model->set_sorted_list(list_to_sort);
+
         qDebug() << "Loading is finished!";
         emit model_changed();
         emit information_loading_finished();
     }
 }
-
 
