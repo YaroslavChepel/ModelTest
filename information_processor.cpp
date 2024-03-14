@@ -1,17 +1,6 @@
 #include "information_processor.h"
 
-struct Compare {
-    bool operator()(const MeeShop::info_storage& a, const MeeShop::info_storage& b) const {
-        if (!a.app_name.isEmpty() && !b.app_name.isEmpty()) {
-            return a.app_name.compare(b.app_name, Qt::CaseInsensitive) < 0;
-        }
-        else if (!a.rss_country_name.isEmpty() && b.rss_country_name.isEmpty()) {
-            return a.rss_country_name.compare(b.rss_country_name, Qt::CaseInsensitive) < 0;
-        } else {
-            return a.rss_feed_name.compare(b.rss_feed_name, Qt::CaseInsensitive) < 0;
-        }
-    }
-};
+
 
 void MeeShop::information_processor::load_applications(QString xml) {
     QNetworkRequest request(QUrl("http://wunderwungiel.pl/MeeGo/openrepos/" + xml));
@@ -73,16 +62,13 @@ void MeeShop::information_processor::parse_xml(QNetworkReply *reply) {
         emit parsing_error(xml_reader.errorString());
     }
     else {
-        QList<MeeShop::info_storage> list_to_sort = final_model->get_list();
-        std::sort(list_to_sort.begin(), list_to_sort.end(), Compare());
-        foreach (MeeShop::info_storage i, list_to_sort) {
-            qDebug() << i.app_name;
-        }
-        final_model->set_sorted_list(list_to_sort);
-
-        qDebug() << "Loading is finished!";
-        emit model_changed();
-        emit information_loading_finished();
+        QObject::connect(final_model, SIGNAL(sorting_finished()), SLOT(finalise()));
+        final_model->sort();
     }
+}
+void MeeShop::information_processor::finalise() {
+    qDebug() << "Loading is finished!";
+    emit model_changed();
+    emit information_loading_finished();
 }
 

@@ -27,6 +27,7 @@ namespace MeeShop {
     private slots:
         void parse_xml(QNetworkReply* reply);
         void process_reply();
+        void finalise();
     signals:
         void information_loading_finished();
         void model_changed();

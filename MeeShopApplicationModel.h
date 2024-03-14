@@ -5,7 +5,6 @@
 #include <QList>
 #include <algorithm>
 #include <QDebug>
-#include <QSortFilterProxyModel>
 
 
 namespace MeeShop {
@@ -29,6 +28,19 @@ public:
         LetterRole
     };
 
+    struct Compare {
+        bool operator()(const MeeShop::info_storage& a, const MeeShop::info_storage& b) const {
+            if (!a.app_name.isEmpty() && !b.app_name.isEmpty()) {
+                return a.app_name.compare(b.app_name, Qt::CaseInsensitive) < 0;
+            }
+            else if (!a.rss_country_name.isEmpty() && b.rss_country_name.isEmpty()) {
+                return a.rss_country_name.compare(b.rss_country_name, Qt::CaseInsensitive) < 0;
+            } else {
+                return a.rss_feed_name.compare(b.rss_feed_name, Qt::CaseInsensitive) < 0;
+            }
+        }
+    };
+
     MeeShopApplicationModel(QObject *parent = 0);
 
     void addEntry(const MeeShop::info_storage &is);
@@ -37,13 +49,17 @@ public:
 
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
-    QList<MeeShop::info_storage> get_list() {return m_entries; m_entries.clear();}
-    void set_sorted_list(QList<MeeShop::info_storage> new_list) {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount());
-        m_entries = new_list;
-        endInsertRows();
+    void sort() {
+        std::sort(m_entries.begin(), m_entries.end(), Compare());
+        emit sorting_finished();
     }
 
+    Q_INVOKABLE void slice(int from, int to) {
+        m_entries = m_entries.mid(from, to - from + 1);
+    }
+
+signals:
+    void sorting_finished();
 private:
     QList<MeeShop::info_storage> m_entries;
 };
